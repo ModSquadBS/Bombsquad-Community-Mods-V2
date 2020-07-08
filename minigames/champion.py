@@ -23,7 +23,7 @@
 # ba_meta require api 6
 # (see https://ballistica.net/wiki/meta-tag-system)
 
-#mod_version=1.0
+#mod_version=1.01
 
 from __future__ import annotations
 
@@ -62,7 +62,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 	"""Game type where last player(s) left alive win."""
 
 	name = 'Champion'
-	description = 'Eliminate others and become the Champion.[AbhinaYx/ModSquad]'
+	description = 'Eliminate others and become the Champion.'
 	scoreconfig = ba.ScoreConfig(label='Victories',
 								 scoretype=ba.ScoreType.POINTS,
 								 none_is_winner=True)
@@ -87,15 +87,11 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 			),
 			ba.BoolSetting('Epic Mode', default=False),
 		]
-		if issubclass(sessiontype, ba.DualTeamSession):
-			settings.append(
-				ba.BoolSetting('Balance Total Lives', default=False))
 		return settings
 
 	@classmethod
 	def supports_session_type(cls, sessiontype: Type[ba.Session]) -> bool:
-		return (issubclass(sessiontype, ba.DualTeamSession)
-				or issubclass(sessiontype, ba.FreeForAllSession))
+		return (issubclass(sessiontype, ba.FreeForAllSession))
 
 	@classmethod
 	def get_supported_maps(cls, sessiontype: Type[ba.Session]) -> List[str]:
@@ -128,12 +124,10 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 							  if self._epic_mode else ba.MusicType.SURVIVAL)
 
 	def get_instance_description(self) -> Union[str, Sequence]:
-		return 'Last team standing wins.' if isinstance(
-			self.session, ba.DualTeamSession) else 'Eliminate others and become the Champion.[AbhinaYx/ModSquad]'
+		return 'Eliminate others and become the Champion.[AbhinaYx-ModSquad]'
 
 	def get_instance_description_short(self) -> Union[str, Sequence]:
-		return 'last team standing wins' if isinstance(
-			self.session, ba.DualTeamSession) else 'Eliminate others and become the Champion.'
+		return 'eliminate others and become the Champion.'
 	def on_player_join(self, player: Player) -> None:
 
 		# No longer allowing mid-game joiners here; too easy to exploit.
@@ -172,23 +166,6 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 		self.setup_standard_time_limit(self._time_limit)
 		self.setup_standard_powerup_drops()
 		
-		# If balance-team-lives is on, add lives to the smaller team until
-		# total lives match.
-		if (isinstance(self.session, ba.DualTeamSession)
-				and self._balance_total_lives and self.teams[0].players
-				and self.teams[1].players):
-			if self._get_total_team_lives(
-					self.teams[0]) < self._get_total_team_lives(self.teams[1]):
-				lesser_team = self.teams[0]
-				greater_team = self.teams[1]
-			else:
-				lesser_team = self.teams[1]
-				greater_team = self.teams[0]
-			add_index = 0
-			while (self._get_total_team_lives(lesser_team) <
-				   self._get_total_team_lives(greater_team)):
-				lesser_team.players[add_index].lives += 1
-				add_index = (add_index + 1) % len(lesser_team.players)
 
 		# We could check game-over conditions at explicit trigger points,
 		# but lets just do the simple thing and poll it.
