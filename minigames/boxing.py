@@ -26,7 +26,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-#mod_version=1.0
+#mod_version=1.1
 import ba
 from bastd.actor.playerspaz import PlayerSpaz
 from bastd.actor.scoreboard import Scoreboard
@@ -51,7 +51,7 @@ class BoxingGame(ba.TeamGameActivity[Player, Team]):
     """A game type based on acquiring kills."""
 
     name = 'Boxing'
-    description = 'Crush your enemies with boxing gloves! Ported for 1.5 by AbhinaYx'
+    description = 'Crush your enemies with boxing gloves!'
 
     # Print messages when players die since it matters here.
     announce_player_deaths = True
@@ -130,7 +130,7 @@ class BoxingGame(ba.TeamGameActivity[Player, Team]):
                               ba.MusicType.TO_THE_DEATH)
 
     def get_instance_description(self) -> Union[str, Sequence]:
-        return 'Boxing ported for 1.5 by AbhinaYx'
+        return 'Boxing ported for 1.5 by AbhinaYx-ModSquad'
 
     def get_instance_description_short(self) -> Union[str, Sequence]:
         return 'kill ${ARG1} enemies with gloves.', self._score_to_win
@@ -144,6 +144,7 @@ class BoxingGame(ba.TeamGameActivity[Player, Team]):
                           position: Sequence[float] = (0, 0, 0),
                           angle: float = None) -> PlayerSpaz:
         super().spawn_player_spaz(player)
+        player.actor.connect_controls_to_player(enable_bomb=False)
         player.actor.equip_boxing_gloves()
 
     def _standard_drop_powerups(self) -> None:return
