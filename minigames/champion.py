@@ -62,7 +62,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 	"""Game type where last player(s) left alive win."""
 
 	name = 'Champion'
-	description = 'Eliminate others and become the Champion.'
+	description = 'Eliminate others and become the Champion.[AbhinaYx/ModSquad]'
 	scoreconfig = ba.ScoreConfig(label='Victories',
 								 scoretype=ba.ScoreType.POINTS,
 								 none_is_winner=True)
@@ -129,7 +129,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 
 	def get_instance_description(self) -> Union[str, Sequence]:
 		return 'Last team standing wins.' if isinstance(
-			self.session, ba.DualTeamSession) else 'Eliminate others and become the Champion.'
+			self.session, ba.DualTeamSession) else 'Eliminate others and become the Champion.[AbhinaYx/ModSquad]'
 
 	def get_instance_description_short(self) -> Union[str, Sequence]:
 		return 'last team standing wins' if isinstance(
