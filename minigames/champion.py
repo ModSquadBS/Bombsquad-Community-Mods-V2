@@ -351,17 +351,19 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 		upNextP1='TBD'
 		upNextP2='TBD'
 		n=len(self.myPlayers)
-		if self.count>=n-1:
+		if self.count>n-1:
 			upNextP1=self.myPlayers[0]
-			if not self.myPlayers[1] in [playerPlayingRightNow1,playerPlayingRightNow2]:
-				upNextP2=self.myPlayers[1]
-			else:
-				upNextP2="TBD"
+			upNextP2=self.myPlayers[1]
+		elif self.count==n-1:
+			upNextP1=self.myPlayers[self.count]
+			upNextP2=self.myPlayers[0]
 		else:
 			upNextP1=self.myPlayers[self.count]
 			upNextP2=self.myPlayers[self.count+1]
+		
+		if upNextP1 in [playerPlayingRightNow1,playerPlayingRightNow2]:upNextP1="TBD"
+		if upNextP2 in [playerPlayingRightNow1,playerPlayingRightNow2]:upNextP2="TBD"
 		upNextNodeText="Up Next:\n"+upNextP1+" vs "+upNextP2+"\n"
-
 		z=self.roundNameFunc(n-1)
 		if z<4:upNextNodeText+=self.roundNames[z]
 		self.upNextNode=ba.newnode('text',
