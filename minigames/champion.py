@@ -47,12 +47,13 @@ class Player(ba.Player['Team']):
 
 	def __init__(self) -> None:
 		self.lives = 0
+		self.wins=0
 
 class Team(ba.Team[Player]):
 	"""Our team type for this game."""
 
 	def __init__(self) -> None:
-		self.survival_seconds: Optional[int] = None
+		self.survival_seconds: Optional[int] = 0
 		self.spawn_order: List[Player] = []
 
 
@@ -63,7 +64,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 
 	name = 'Champion'
 	description = 'Eliminate others and become the Champion.'
-	scoreconfig = ba.ScoreConfig(label='Wins',
+	scoreconfig = ba.ScoreConfig(label='Score',
 								 scoretype=ba.ScoreType.POINTS,
 								 none_is_winner=True)
 	# Show messages when players die since it's meaningful here.
@@ -124,10 +125,10 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 							  if self._epic_mode else ba.MusicType.SURVIVAL)
 
 	def get_instance_description(self) -> Union[str, Sequence]:
-		return 'Eliminate others and become the Champion.[AbhinaYx-ModSquad]'
+		return 'Eliminate others and become the Champion'
 
 	def get_instance_description_short(self) -> Union[str, Sequence]:
-		return 'eliminate others and become the Champion.'
+		return 'Champion credits : AbhinaYx-ModSquad'
 	def on_player_join(self, player: Player) -> None:
 
 		# No longer allowing mid-game joiners here; too easy to exploit.
@@ -156,8 +157,6 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 
 		#===
 		self.myPlayers=[str(x.getname()) for x in self.players]
-		self.myPlayersScore=[0 for x in self.myPlayers]
-		for x in self.teams:x.survival_seconds=0
 		self.spawnPlayer()
 		
 		#===
@@ -242,7 +241,10 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 				else:
 					winningPlayer= self.playerFromName(self.myPlayers[self.count-2])
 				if str(losingPlayer.getname()) in self.myPlayers:self.myPlayers.remove(str(losingPlayer.getname()))
-				winningPlayer.team.survival_seconds+=1
+				if winningPlayer.team.survival_seconds<=losingPlayer.team.survival_seconds:
+					winningPlayer.team.survival_seconds=losingPlayer.team.survival_seconds+1
+				else:winningPlayer.team.survival_seconds+=1
+				winningPlayer.wins+=1
 				if winningPlayer.is_alive() and not len(self.myPlayers)==1:
 					winningPlayer.actor.handlemessage(ba.DieMessage(immediate=True))
 				self.count-=1
@@ -299,7 +301,6 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 		for team in self.teams:
 			results.set_team_score(team, team.survival_seconds)
 		self.end(results=results)
-		if not results.winning_sessionteam:self.announce_game_results(results=results,activity=ba.getactivity())
 
 
 
@@ -329,7 +330,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 			y=self.playerFromName(i)
 			if y:
 				playersInGameText+=i
-				x=y.team.survival_seconds
+				x=y.wins
 				playersInGameText+=' (W:'+str(x)+')\n'
 
 		self.playersInGameNode=ba.newnode('text',
@@ -434,30 +435,3 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 							'text': self.roundNames[roundNameInt]
 						}
 			)
-	def announce_game_results(self,results: ba.GameResults,activity: ba.GameActivity) -> None:
-		import _ba
-		from ba._math import normalized_color
-		from ba._general import Call
-		from ba._gameutils import cameraflash
-		from ba._lang import Lstr
-		from ba._freeforallsession import FreeForAllSession
-		from ba._messages import CelebrateMessage
-		_ba.timer(0.1, Call(_ba.playsound, _ba.getsound('boxingBell')))
-
-		celebrate_msg = CelebrateMessage(duration=10.0)
-		player=self.playerFromName(self.myPlayers[0])
-		player.actor.handlemessage(celebrate_msg)
-		cameraflash()
-
-				# Some languages say "FOO WINS" different for teams vs players.
-		if isinstance(self, FreeForAllSession):
-			wins_resource = 'winsPlayerText'
-		else:
-			wins_resource = 'winsTeamText'
-		wins_text = Lstr(resource=wins_resource,
-						subs=[('${NAME}', player.team.name)])
-		activity.show_zoom_message(
-			wins_text,
-			scale=0.85,
-			color=normalized_color(player.team.color),
-		)
