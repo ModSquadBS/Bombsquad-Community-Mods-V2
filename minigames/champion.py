@@ -381,7 +381,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 			
 	def spawnPlayer(self):
 		n=len(self.myPlayers)
-		if n<1:return
+		if n<=1:return
 		if self.count>=n-1 and n>=2:
 			self.count=0
 
