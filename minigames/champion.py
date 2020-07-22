@@ -299,6 +299,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 		for team in self.teams:
 			results.set_team_score(team, team.survival_seconds)
 		self.end(results=results)
+		if not results.winning_sessionteam:self.announce_game_results(results=results,activity=ba.getactivity())
 
 
 
@@ -433,3 +434,30 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 							'text': self.roundNames[roundNameInt]
 						}
 			)
+	def announce_game_results(self,results: ba.GameResults,activity: ba.GameActivity) -> None:
+		import _ba
+		from ba._math import normalized_color
+		from ba._general import Call
+		from ba._gameutils import cameraflash
+		from ba._lang import Lstr
+		from ba._freeforallsession import FreeForAllSession
+		from ba._messages import CelebrateMessage
+		_ba.timer(2.1, Call(_ba.playsound, _ba.getsound('boxingBell')))
+
+		celebrate_msg = CelebrateMessage(duration=10.0)
+		player=self.playerFromName(self.myPlayers[0])
+		player.actor.handlemessage(celebrate_msg)
+		cameraflash()
+
+				# Some languages say "FOO WINS" different for teams vs players.
+		if isinstance(self, FreeForAllSession):
+			wins_resource = 'winsPlayerText'
+		else:
+			wins_resource = 'winsTeamText'
+		wins_text = Lstr(resource=wins_resource,
+						subs=[('${NAME}', player.team.name)])
+		activity.show_zoom_message(
+			wins_text,
+			scale=0.85,
+			color=normalized_color(player.team.color),
+		)
