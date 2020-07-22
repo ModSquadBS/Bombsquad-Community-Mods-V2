@@ -442,7 +442,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 		from ba._lang import Lstr
 		from ba._freeforallsession import FreeForAllSession
 		from ba._messages import CelebrateMessage
-		_ba.timer(2.1, Call(_ba.playsound, _ba.getsound('boxingBell')))
+		_ba.timer(0.1, Call(_ba.playsound, _ba.getsound('boxingBell')))
 
 		celebrate_msg = CelebrateMessage(duration=10.0)
 		player=self.playerFromName(self.myPlayers[0])
