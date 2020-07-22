@@ -351,12 +351,9 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 		upNextP1='TBD'
 		upNextP2='TBD'
 		n=len(self.myPlayers)
-		if self.count>n-1:
+		if self.count>=n-1:
 			upNextP1=self.myPlayers[0]
 			upNextP2=self.myPlayers[1]
-		elif self.count==n-1:
-			upNextP1=self.myPlayers[self.count]
-			upNextP2=self.myPlayers[0]
 		else:
 			upNextP1=self.myPlayers[self.count]
 			upNextP2=self.myPlayers[self.count+1]
