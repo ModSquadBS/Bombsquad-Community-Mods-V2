@@ -63,7 +63,7 @@ class ChampionGame(ba.TeamGameActivity[Player, Team]):
 
 	name = 'Champion'
 	description = 'Eliminate others and become the Champion.'
-	scoreconfig = ba.ScoreConfig(label='Victories',
+	scoreconfig = ba.ScoreConfig(label='Wins',
 								 scoretype=ba.ScoreType.POINTS,
 								 none_is_winner=True)
 	# Show messages when players die since it's meaningful here.
