@@ -50,7 +50,7 @@ class Team(ba.Team[Player]):
 class BoxingGame(ba.TeamGameActivity[Player, Team]):
     """A game type based on acquiring kills."""
 
-    name = 'Boxing'
+    name = 'Boxing 1.5+'
     description = 'Crush your enemies with boxing gloves!'
 
     # Print messages when players die since it matters here.
