@@ -43,7 +43,7 @@ class Gather(gather.GatherWindow):
             searchText = txt = ba.textwidget(
                 parent=self._tab_container,
                 position=(c_width * 0.5 + 250, v + 105),
-                color=ba.app.title_color,
+                color=ba.app.ui.title_color,
                 scale=1.3,
                 size=(150, 30),
                 maxwidth=145,
@@ -59,7 +59,7 @@ class Gather(gather.GatherWindow):
             ba.textwidget(
                 parent=self._tab_container,
                 position=(c_width * 0.5 + 125, v + 122),
-                color=ba.app.title_color,
+                color=ba.app.ui.title_color,
                 scale=1.1,
                 size=(0,0),
                 h_align='left',
@@ -71,8 +71,8 @@ class Gather(gather.GatherWindow):
                     parent=self._tab_container,
                     text="Case-Sensitive",
                     position=(c_width * 0.5 + 125, v + 135),
-                    color=ba.app.title_color,
-                    textcolor=ba.app.title_color,
+                    color=ba.app.ui.title_color,
+                    textcolor=ba.app.ui.title_color,
                     size=(50,50),
                     scale=1,
                     value=False,
@@ -83,7 +83,7 @@ class Gather(gather.GatherWindow):
 
         # Special case: if a party-queue window is up, don't do any of this
         # (keeps things smoother).
-        if ba.app.have_party_queue_window:
+        if ba.app.ui.have_party_queue_window:
             return
         # If we've got a party-name text widget, keep its value plugged
         # into our public host name.
@@ -239,5 +239,8 @@ class Gather(gather.GatherWindow):
 
                     PingThread(party['address'], party['port'],
                                ba.WeakCall(self._ping_callback)).start()
-
-gather.GatherWindow._update_internet_tab=Gather._update_internet_tab
+# ba_meta require api 6
+# ba_meta export plugin
+class Plugin(ba.Plugin):
+	def on_app_launch(self):
+		gather.GatherWindow._update_internet_tab=Gather._update_internet_tab
