@@ -243,4 +243,5 @@ class Gather(gather.GatherWindow):
 # ba_meta export plugin
 class Plugin(ba.Plugin):
 	def on_app_launch(self):
+		ba.screenmessage("Thanks for using AbhinaYx's mod")
 		gather.GatherWindow._update_internet_tab=Gather._update_internet_tab
