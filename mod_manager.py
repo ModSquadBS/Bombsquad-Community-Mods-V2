@@ -1,7 +1,7 @@
 # ba_meta require api 6
 # Made By: AwesomeLogic
 
-import urllib
+import urllib.request
 import json
 import os
 
@@ -15,13 +15,16 @@ INDEX_URL = DL.format(REPO, BRANCH,'' ,'index.json')
 mods_dir = ba.app.python_directory_user
 
 def get_index():
-	index = json.loads(urllib.request.urlopen(INDEX_URL).read().decode())
-	local_mods = os.listdir(mods_dir)
-	for mod, data in index.items():
-		mod = mod+'.py'
-		if mod not in local_mods:
-			print('\'{}\' not in local_mods. Downloading...'.format(mod))
-			download(mod,data['category']) #looks so ez
+	try:
+		index = json.loads(urllib.request.urlopen(INDEX_URL).read().decode())
+		local_mods = os.listdir(mods_dir)
+		for mod, data in index.items():
+			mod = mod+'.py'
+			if mod not in local_mods:
+				print('\'{}\' not in local_mods. Downloading...'.format(mod))
+				download(mod,data['category']) #looks so ez
+	finally:
+		print("Done...")
 
 def download(name,category):
 	data = urllib.request.urlopen(DL.format(REPO,BRANCH,category,name)).read().decode()
